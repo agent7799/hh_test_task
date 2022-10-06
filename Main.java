@@ -1,76 +1,133 @@
 package ru.hh;
 
-import java.util.Scanner;
-import java.util.regex.Matcher;
+import java.util.*;
+
 
 public class Main {
 
-//    private static int firstStackSize;
-//    private static int secondStackSize;
-//    private static int maxSalary;
+    private static int maxSalarySum = 0;
+    private static ArrayList<Integer> firstStack = new ArrayList<>();
+    private static ArrayList<Integer> secondStack = new ArrayList<>();
+    private static int firstStackSalariesSum = 0;
+    private static int secondStackSalariesSum = 0;
+
 
     public static void main(String[] args) {
-	// write your code here
 
-        int firstStackSize;
-        int secondStackSize;
-        int maxSalarySum;
-        int salarySum = 0;
-        int result = 0;
-        String firstInputRegexp = "\\d+\\s\\d+\\s\\d+";
-        String lineInputRegexp = "-?\\d?\\s-?\\d?";
+
+
+//
+//        firstStackSize = 5;
+//        secondStackSize = 5;
+//        maxSalarySum = 10;
+//
+//        firstStack.add(5);
+//        firstStack.add(1);
+//        firstStack.add(1);
+//        firstStack.add(1);
+//        firstStack.add(1);
+//
+//        secondStack.add(1);
+//        secondStack.add(3);
+//        secondStack.add(3);
+//        secondStack.add(3);
+//        secondStack.add(3);
+
+//        firstStackSalariesSum = 9;
+//        secondStackSalariesSum = 13;
+
+
+
+
 
         Scanner sc = new Scanner(System.in);
-        while (true){
-            System.out.println("Input FIRST stack size, SECOND stack size and MAX salary (separated by spaces): ");
-            String input = sc.nextLine().trim();
+        String input = sc.nextLine().trim();
+        String[] inputData = input.split(" ");
+        int firstStackSize = Integer.parseInt(inputData[0]);
+        int secondStackSize = Integer.parseInt(inputData[1]);
+        maxSalarySum = Integer.parseInt(inputData[2]);
 
-            if(input.matches(firstInputRegexp)) {
-                System.out.println("input is ok");
-                String[] inputData = input.split(" ");
-                firstStackSize = Integer.parseInt(inputData[0]);
-                secondStackSize = Integer.parseInt(inputData[1]);
-                maxSalarySum = Integer.parseInt(inputData[2]);
-                break;
-            } else {
-                System.out.println("Input data wrong, pls input again!");
-                continue;
-            }
-        }
+//        System.out.println("firstStackSize: " + firstStackSize + ", secondStackSize: " + secondStackSize + ", maxSalarySum: " + maxSalarySum);
 
-        int maxSize =  Math.max(firstStackSize, secondStackSize);
+        int maxSize = Math.max(firstStackSize, secondStackSize);
         for (int i = 0; i < maxSize; i++) {
-            int data0;
-            int data1;
-            int minData;
-            String lineInput;
-
-            while (true){
-                lineInput = sc.nextLine().trim();
-                if(lineInput.matches(lineInputRegexp)) {
-                   break;
-                }else {
-                    System.out.println("Input data wrong, pls input again!");
-                }
-            }
-
-
+            String lineInput = sc.nextLine().trim();
             String[] data = lineInput.split(" ");
             if (data[0].equals("-")) {
-                minData = Integer.parseInt(data[1]);
-            }else if (data[1].equals("-")){
-                minData = Integer.parseInt(data[0]);
-            }else {
-                minData = Math.min(Integer.parseInt(data[0]), Integer.parseInt(data[1]));
+            } else {
+                int inputOne = Integer.parseInt(data[0]);
+                firstStack.add(inputOne);
+                firstStackSalariesSum += inputOne;
+//                System.out.println("entered: " + firstStack.get(i));
             }
-            result = i+1;
-            salarySum += minData;
-            System.out.println(String.format("Salary sum: %d , max Salary: %d", salarySum, maxSalarySum));
-            if (salarySum > maxSalarySum){
-                break;
+
+            if (data[1].equals("-")) {
+            } else {
+                int inputTwo = Integer.parseInt(data[1]);
+                secondStack.add(inputTwo);
+                secondStackSalariesSum += inputTwo;
+//                System.out.println("entered: "  + secondStack.get(i));
             }
         }
-        result = result + 1;
-        System.out.println("result " + result);
+
+
+//        System.out.println("firstStackSize: " + firstStackSize + ", secondStackSize: " + secondStackSize + ", maxSalarySum: " + maxSalarySum);
+//        System.out.println("firstStack: " + firstStack);
+//        System.out.println("secondStack: " + secondStack);
+//        System.out.println("firstStackSalariesSum: " + firstStackSalariesSum + ", secondStackSalariesSum: " + secondStackSalariesSum);
+//        System.out.println("");
+
+
+        int firstStackResult = 0;
+        int secondStackResult = 0;
+        int bothStacksResult = 0;
+
+        bothStacksResult = getMaxTurns(0, 0);
+
+        if (firstStackSalariesSum < maxSalarySum){
+            firstStack.clear();
+            firstStackResult = getMaxTurns(firstStackSalariesSum, firstStackSize);
+        }
+
+        if (secondStackSalariesSum < maxSalarySum) {
+            secondStackResult = getMaxTurns(secondStackSalariesSum, secondStackSize);
+            int salarySum = secondStackSalariesSum;
+            secondStack.clear();
+        }
+
+        System.out.println(Math.max(firstStackResult, Math.max(secondStackResult, bothStacksResult)) );
+
+    }
+
+    private static int getMaxTurns(int initialSalarySum, int initialTurn) {
+        int result = initialTurn + 1;
+        int salarySum = initialSalarySum;
+        while (true) {
+            if (firstStack.isEmpty() && secondStack.isEmpty()) {
+                break;
+            } else if (firstStack.isEmpty()) {
+                salarySum += secondStack.get(0);
+                secondStack.remove(0);
+            } else if (secondStack.isEmpty()) {
+                salarySum += firstStack.get(0);
+                firstStack.remove(0);
+            } else {
+                if (firstStack.get(0) < secondStack.get(0)) {
+                    salarySum += firstStack.get(0);
+                    firstStack.remove(0);
+                } else {
+                    salarySum += secondStack.get(0);
+                    secondStack.remove(0);
+                }
+            }
+            if(salarySum > maxSalarySum){
+                break;
+            }
+            result++;
+        }
+        return result;
     }
 }
+
+
+
