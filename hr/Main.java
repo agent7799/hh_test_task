@@ -37,37 +37,37 @@ public class Main {
 //        secondStack = new ArrayList<>(Arrays.asList(1, 3, 3, 3, 3));
 
 //        ---------------------------------------------------------------------------------------------------------
-//        firstStackSize = 4;
-//        secondStackSize = 5;
-//        maxSalarySum = 18;
-//        firstStack = new ArrayList<>(Arrays.asList(1,3, 5, 7));
-//        secondStack = new ArrayList<>(Arrays.asList(1, 2, 6, 8, 1));
+        firstStackSize = 4;
+        secondStackSize = 5;
+        maxSalarySum = 13;
+        firstStack = new ArrayList<>(Arrays.asList(1, 2, 3, 4));
+        secondStack = new ArrayList<>(Arrays.asList(1, 2, 3, 3, 1));
 //        ---------------------------------------------------------------------------------------------------------
 
-        Scanner sc = new Scanner(System.in);
-        String input = sc.nextLine().trim();
-        String[] inputData = input.split(" ");
-        firstStackSize = Integer.parseInt(inputData[0]);
-        secondStackSize = Integer.parseInt(inputData[1]);
-        maxSalarySum = Integer.parseInt(inputData[2]);
-
-
-        int maxSize = Math.max(firstStackSize, secondStackSize);
-        for (int i = 0; i < maxSize; i++) {
-            String lineInput = sc.nextLine().trim();
-            String[] data = lineInput.split(" ");
-            if (!data[0].equals("-")) {
-                int inputOne = Integer.parseInt(data[0]);
-                firstStack.add(inputOne);
-//               firstStackSalariesSum += inputOne;
-            }
-            if (!data[1].equals("-")) {
-                int inputTwo = Integer.parseInt(data[1]);
-                secondStack.add(inputTwo);
-//                secondStackSalariesSum += inputTwo;
-            }
-        }
-        sc.close();
+//        Scanner sc = new Scanner(System.in);
+//        String input = sc.nextLine().trim();
+//        String[] inputData = input.split(" ");
+//        firstStackSize = Integer.parseInt(inputData[0]);
+//        secondStackSize = Integer.parseInt(inputData[1]);
+//        maxSalarySum = Integer.parseInt(inputData[2]);
+//
+//
+//        int maxSize = Math.max(firstStackSize, secondStackSize);
+//        for (int i = 0; i < maxSize; i++) {
+//            String lineInput = sc.nextLine().trim();
+//            String[] data = lineInput.split(" ");
+//            if (!data[0].equals("-")) {
+//                int inputOne = Integer.parseInt(data[0]);
+//                firstStack.add(inputOne);
+////               firstStackSalariesSum += inputOne;
+//            }
+//            if (!data[1].equals("-")) {
+//                int inputTwo = Integer.parseInt(data[1]);
+//                secondStack.add(inputTwo);
+////                secondStackSalariesSum += inputTwo;
+//            }
+//        }
+//        sc.close();
 
         firstStackSalariesSum = getStackSalariesSum(firstStack);
         secondStackSalariesSum = getStackSalariesSum(secondStack);
@@ -102,12 +102,17 @@ public class Main {
                 salarySum += firstStack.get(0);
                 firstStack.remove(0);
             } else {
-                if (firstStack.get(0) <= secondStack.get(0)) {
-                    salarySum += firstStack.get(0);
-                    firstStack.remove(0);
-                } else {
+                if (firstStack.get(0) < secondStack.get(0)) {
+
+                } if (firstStack.get(0) > secondStack.get(0)) {
                     salarySum += secondStack.get(0);
                     secondStack.remove(0);
+                }else if(getStackSalariesSum(firstStack) > getStackSalariesSum(secondStack)){
+                    salarySum += secondStack.get(0);
+                    secondStack.remove(0);
+                }else {
+                    salarySum += firstStack.get(0);
+                    firstStack.remove(0);
                 }
             }
             if (salarySum <= maxSalarySum) {

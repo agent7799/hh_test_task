@@ -18,65 +18,35 @@ public class HrManagers {
     public static int secondStackSalariesSum = 0;
     public static int firstStackSize = 0;
     public static int secondStackSize = 0;
-    public static int expectedResult;
+
 
     public static void main(String[] args) {
-
 //        ---------------------------------------------------------------------------------------------------------
-//        firstStackSize = 5;
-//        secondStackSize = 5;
+////
+//         firstStackSize = 6;
+//         secondStackSize = 4;
 //        maxSalarySum = 10;
-//
-//        firstStack.add(5);
-//        firstStack.add(1);
-//        firstStack.add(1);
-//        firstStack.add(1);
-//        firstStack.add(1);
-//
-//        secondStack.add(1);
-//        secondStack.add(3);
-//        secondStack.add(3);
-//        secondStack.add(3);
-//        secondStack.add(3);
+//        firstStack = new ArrayList<>(Arrays.asList(4, 2, 4, 6, 1, 7));
+//        secondStack = new ArrayList<>(Arrays.asList(2, 1, 8, 5));
 //        ---------------------------------------------------------------------------------------------------------
-
-//
-        int firstStackSize = 6;
-        int secondStackSize = 4;
-        maxSalarySum = 10;
-        firstStack = new ArrayList<>(Arrays.asList(4, 2, 4, 6, 1, 7));
-        secondStack = new ArrayList<>(Arrays.asList(2, 1, 8, 5));
-        expectedResult = 4;
-//        ---------------------------------------------------------------------------------------------------------
-//        firstStackSize = 4;
-//        secondStackSize = 3;
+//        int firstStackSize = 3;
+//        int secondStackSize = 4;
 //        maxSalarySum = 11;
-//        firstStack = new ArrayList<>(Arrays.asList(1, 2, 3, 4));
-//        secondStack = new ArrayList<>(Arrays.asList(1, 2, 3));
-//        expectedResult = 5;
+//        firstStack = new ArrayList<>(Arrays.asList(1, 2, 3));
+//        secondStack = new ArrayList<>(Arrays.asList(1, 2, 3, 4));
 //        ---------------------------------------------------------------------------------------------------------
 //        firstStackSize = 5;
 //        secondStackSize = 5;
 //        maxSalarySum = 10;
-//        firstStack = new ArrayList<>(Arrays.asList(1,3, 3, 3, 3));
-//        secondStack = new ArrayList<>(Arrays.asList(5, 1, 1, 1, 1));
-//        expectedResult = 6;
+//        firstStack = new ArrayList<>(Arrays.asList(5, 1, 1, 1, 1));
+//        secondStack = new ArrayList<>(Arrays.asList(1, 3, 3, 3, 3));
+
 //        ---------------------------------------------------------------------------------------------------------
-//        ---------------------------------------------------------------------------------------------------------
-//        firstStackSize = 5;
-//        secondStackSize = 5;
-//        maxSalarySum = 10;
-//        firstStack = new ArrayList<>(Arrays.asList(9, 1, 1, 1, 1));
-//        secondStack = new ArrayList<>(Arrays.asList(11, 3, 3, 3, 3));
-//        expectedResult = 2;
-//        ---------------------------------------------------------------------------------------------------------
-//        ---------------------------------------------------------------------------------------------------------
-//        firstStackSize = 1;
-//        secondStackSize = 5;
-//        maxSalarySum = 5;
-//        firstStack = new ArrayList<>(Arrays.asList(4));
-//        secondStack = new ArrayList<>(Arrays.asList(1, 1, 1, 1, 2));
-//        expectedResult = 5;
+        firstStackSize = 4;
+        secondStackSize = 5;
+        maxSalarySum = 14;
+        firstStack = new ArrayList<>(Arrays.asList(1, 2, 3, 3, 1, 3, 1, 2));
+        secondStack = new ArrayList<>(Arrays.asList(1, 2, 3, 3, 2, 3, 2, 3));
 //        ---------------------------------------------------------------------------------------------------------
 
         //inputInitialData();
@@ -87,51 +57,54 @@ public class HrManagers {
         log.info("firstStack: " + firstStack + ", firstStackSize: " + firstStack.size() + ", firstStackSalariesSum: " + firstStackSalariesSum);
         log.info("secondStack: " + secondStack + ", secondStackSize: " + secondStack.size() + ", secondStackSalariesSum: " + secondStackSalariesSum);
 
+        boolean isFirstStackOkBySum = firstStackSalariesSum <= maxSalarySum;
+        boolean isSecondStackOkBySum = secondStackSalariesSum <= maxSalarySum;
         int result;
-        int initialSTurn = 0;
-        int initialSalarySum = 0;
-        if (firstStackSalariesSum <= maxSalarySum & firstStack.size() > secondStack.size()) {
-            initialSTurn = firstStack.size();
-            initialSalarySum = firstStackSalariesSum;
-        } else if (secondStackSalariesSum <= maxSalarySum & secondStack.size() > firstStack.size()) {
-            initialSTurn = secondStack.size();
-            initialSalarySum = secondStackSalariesSum;
-        }
 
-        log.info("initialSTurn " + initialSTurn + " initialSalarySum " + initialSalarySum);
-        result = getMaxTurns(initialSalarySum, initialSTurn, new ArrayList<>(firstStack), new ArrayList<>(secondStack));
-        log.info("RESULT: " + result + ", EXPECTED: " + expectedResult);
+        if ((isFirstStackOkBySum & !isSecondStackOkBySum)
+                || (isFirstStackOkBySum & isSecondStackOkBySum & (firstStackSize > secondStackSize))
+        ) {
+            result = getMaxTurns(firstStackSalariesSum, firstStackSize, new ArrayList<>(), new ArrayList<>(secondStack));
+        } else if ((isSecondStackOkBySum & !isFirstStackOkBySum)
+                || ((isFirstStackOkBySum & isSecondStackOkBySum) & firstStackSize < secondStackSize))
+        {
+            result = getMaxTurns(secondStackSalariesSum, secondStackSize, new ArrayList<>(firstStack), new ArrayList<>());
+        } else {
+            result = getMaxTurns(0, 0, new ArrayList<>(firstStack), new ArrayList<>(secondStack));
+        }
 
         System.out.println(result);
     }
 
-    public static int getMaxTurns(int initialSalarySum, int initialTurn, ArrayList<Integer> firstStack, ArrayList<Integer> secondStack) {
-        log.info("getMaxTurns starts");
-        int turn = initialTurn;
-        int salarySum = initialSalarySum;
+    public static int getMaxTurns(int salarySum, int turn, ArrayList<Integer> firstStack, ArrayList<Integer> secondStack) {
         while (true) {
             if (firstStack.isEmpty() && secondStack.isEmpty()) {
-                log.info("getMaxTurns: both stacks are empty");
                 break;
             } else if (firstStack.isEmpty()) {
-                log.info(secondStack.get(0) + " from secondStack " + secondStack + " added on turn " + turn);
-                salarySum += secondStack.get(0);
-                secondStack.remove(0);
+                incrementSumAndRemove(secondStack, salarySum);
+//                salarySum += secondStack.get(0);
+//                secondStack.remove(0);
             } else if (secondStack.isEmpty()) {
-                log.info(firstStack.get(0) + " from firstStack " + firstStack + "  added on turn " + turn);
-                salarySum += firstStack.get(0);
-                firstStack.remove(0);
+                incrementSumAndRemove(firstStack, salarySum);
+//                salarySum += firstStack.get(0);
+//                firstStack.remove(0);
             } else {
-                if (firstStack.get(0) <= secondStack.get(0)) {
-                    log.info(firstStack.get(0) + " from firstStack " + firstStack + "  added on turn " + turn);
+                if (firstStack.get(0) < secondStack.get(0)) {
                     salarySum += firstStack.get(0);
                     firstStack.remove(0);
-                } else {
-                    log.info(secondStack.get(0) + " from secondStack" + secondStack + "  added on turn " + turn);
+                } else if (firstStack.get(0) > secondStack.get(0)) {
                     salarySum += secondStack.get(0);
                     secondStack.remove(0);
+                }else if(getStackSalariesSum(firstStack) > getStackSalariesSum(secondStack)){
+                    salarySum += secondStack.get(0);
+                    secondStack.remove(0);
+                }else {
+                    salarySum += firstStack.get(0);
+                    firstStack.remove(0);
                 }
             }
+            log.info("firstStack: " + firstStack);
+            log.info("secondStack: " + secondStack);
             if (salarySum <= maxSalarySum) {
                 turn++;
             } else {
@@ -178,6 +151,10 @@ public class HrManagers {
         }
     }
 
+    public static void incrementSumAndRemove(ArrayList<Integer> stack, int salarySum){
+        salarySum += stack.get(0);
+        stack.remove(0);
+    }
 }
 
 
