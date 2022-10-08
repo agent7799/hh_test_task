@@ -1,8 +1,14 @@
 package ru.hh.hr;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
 
+@Slf4j
 public class HrManagers {
 
     public static int maxSalarySum = 0;
@@ -35,21 +41,12 @@ public class HrManagers {
 //        ---------------------------------------------------------------------------------------------------------
 
 //
-//        int firstStackSize = 6;
-//        int secondStackSize = 4;
-//        maxSalarySum = 10;
-//
-//        firstStack.add(4);
-//        firstStack.add(2);
-//        firstStack.add(4);
-//        firstStack.add(6);
-//        firstStack.add(1);
-//        firstStack.add(7);
-//
-//        secondStack.add(2);
-//        secondStack.add(1);
-//        secondStack.add(8);
-//        secondStack.add(5);
+        int firstStackSize = 6;
+        int secondStackSize = 4;
+        maxSalarySum = 10;
+        firstStack = new ArrayList<>(Arrays.asList(4, 2, 4, 6, 1, 7));
+        secondStack = new ArrayList<>(Arrays.asList(2, 1, 8, 5));
+        expectedResult = 4;
 //        ---------------------------------------------------------------------------------------------------------
 //        firstStackSize = 4;
 //        secondStackSize = 3;
@@ -65,8 +62,7 @@ public class HrManagers {
 //        secondStack = new ArrayList<>(Arrays.asList(5, 1, 1, 1, 1));
 //        expectedResult = 6;
 //        ---------------------------------------------------------------------------------------------------------
-
-//        //        ---------------------------------------------------------------------------------------------------------
+//        ---------------------------------------------------------------------------------------------------------
 //        firstStackSize = 5;
 //        secondStackSize = 5;
 //        maxSalarySum = 10;
@@ -75,117 +71,70 @@ public class HrManagers {
 //        expectedResult = 2;
 //        ---------------------------------------------------------------------------------------------------------
 //        ---------------------------------------------------------------------------------------------------------
-        firstStackSize = 1;
-        secondStackSize = 5;
-        maxSalarySum = 5;
-        firstStack = new ArrayList<>(Arrays.asList(4));
-        secondStack = new ArrayList<>(Arrays.asList(1, 1, 1 , 1, 2));
-        expectedResult = 5;
+//        firstStackSize = 1;
+//        secondStackSize = 5;
+//        maxSalarySum = 5;
+//        firstStack = new ArrayList<>(Arrays.asList(4));
+//        secondStack = new ArrayList<>(Arrays.asList(1, 1, 1, 1, 2));
+//        expectedResult = 5;
 //        ---------------------------------------------------------------------------------------------------------
 
-
-//        Scanner sc = new Scanner(System.in);
-//        String input = sc.nextLine().trim();
-//        String[] inputData = input.split(" ");
-//        firstStackSize = Integer.parseInt(inputData[0]);
-//        secondStackSize = Integer.parseInt(inputData[1]);
-//        maxSalarySum = Integer.parseInt(inputData[2]);
-
-//
-//        int maxSize = Math.max(firstStackSize, secondStackSize);
-//        for (int i = 0; i < maxSize; i++) {
-//            String lineInput = sc.nextLine().trim();
-//            String[] data = lineInput.split(" ");
-//            if (!data[0].equals("-")) {
-//                int inputOne = Integer.parseInt(data[0]);
-//                firstStack.add(inputOne);
-////               firstStackSalariesSum += inputOne;
-//                System.out.println("entered: " + firstStack.get(i));
-//            }
-//            if (!data[1].equals("-")) {
-//                int inputTwo = Integer.parseInt(data[1]);
-//                secondStack.add(inputTwo);
-////                secondStackSalariesSum += inputTwo;
-//                System.out.println("entered: "  + secondStack.get(i));
-//            }
-//        }
-//        sc.close();
-
-//        ------------------------------------------------------------------------------------------------------
-//      FOR TEST ONLY!!!!!
-//        ------------------------------------------------------------------------------------------------------
-
-
-//        ------------------------------------------------------------------------------------------------------
+        //inputInitialData();
         firstStackSalariesSum = getStackSalariesSum(firstStack);
         secondStackSalariesSum = getStackSalariesSum(secondStack);
 
-//        System.out.println( "maxSalarySum: " + maxSalarySum);
-//        System.out.print(" firstStack: " + firstStack);
-//        System.out.print(", firstStackSize: " + firstStack.size());
-//        System.out.println(", firstStackSalariesSum: " + firstStackSalariesSum);
-//
-//        System.out.print(" secondStack: " + secondStack);
-//        System.out.print(", secondStackSize: " + secondStack.size());
-//        System.out.println(", secondStackSalariesSum: " + secondStackSalariesSum);
-//        System.out.println("");
-
-
-
+        log.info("maxSalarySum: " + maxSalarySum);
+        log.info("firstStack: " + firstStack + ", firstStackSize: " + firstStack.size() + ", firstStackSalariesSum: " + firstStackSalariesSum);
+        log.info("secondStack: " + secondStack + ", secondStackSize: " + secondStack.size() + ", secondStackSalariesSum: " + secondStackSalariesSum);
 
         int result;
         int initialSTurn = 0;
         int initialSalarySum = 0;
-
-
-
         if (firstStackSalariesSum <= maxSalarySum & firstStack.size() > secondStack.size()) {
             initialSTurn = firstStack.size();
             initialSalarySum = firstStackSalariesSum;
         } else if (secondStackSalariesSum <= maxSalarySum & secondStack.size() > firstStack.size()) {
             initialSTurn = secondStack.size();
             initialSalarySum = secondStackSalariesSum;
-
         }
-//        System.out.println("initialSTurn " + initialSTurn + " initialSalarySum " + initialSalarySum);
-        result = getMaxTurns(initialSalarySum, initialSTurn, new ArrayList<>(firstStack), new ArrayList<>(secondStack));
-//        System.out.println("running bothStacksResult: " + result);
 
-//        System.out.println("---------------------------------------------------------------------");
-//        System.out.println("BEST RESULT IS: " + Math.max(firstStackResult, Math.max(secondStackResult, bothStacksResult)));
-//        System.out.println("EXPECTED: " + expectedResult);
-//        System.out.println("---------------------------------------------------------------------");
+        log.info("initialSTurn " + initialSTurn + " initialSalarySum " + initialSalarySum);
+        result = getMaxTurns(initialSalarySum, initialSTurn, new ArrayList<>(firstStack), new ArrayList<>(secondStack));
+        log.info("RESULT: " + result + ", EXPECTED: " + expectedResult);
+
         System.out.println(result);
     }
 
-    public static int getMaxTurns(int initialSalarySum, int initialTurn,  ArrayList<Integer> firstStack, ArrayList<Integer> secondStack) {
+    public static int getMaxTurns(int initialSalarySum, int initialTurn, ArrayList<Integer> firstStack, ArrayList<Integer> secondStack) {
+        log.info("getMaxTurns starts");
         int turn = initialTurn;
         int salarySum = initialSalarySum;
         while (true) {
             if (firstStack.isEmpty() && secondStack.isEmpty()) {
+                log.info("getMaxTurns: both stacks are empty");
                 break;
             } else if (firstStack.isEmpty()) {
-//                System.out.println(secondStack.get(0) + " from secondStack " + secondStack + " added on turn " + turn );
+                log.info(secondStack.get(0) + " from secondStack " + secondStack + " added on turn " + turn);
                 salarySum += secondStack.get(0);
                 secondStack.remove(0);
             } else if (secondStack.isEmpty()) {
-//                System.out.println(firstStack.get(0) + " from firstStack " + firstStack + "  added on turn " + turn );
+                log.info(firstStack.get(0) + " from firstStack " + firstStack + "  added on turn " + turn);
                 salarySum += firstStack.get(0);
                 firstStack.remove(0);
             } else {
                 if (firstStack.get(0) <= secondStack.get(0)) {
-//                    System.out.println(firstStack.get(0) + " from firstStack " + firstStack + "  added on turn " + turn );
+                    log.info(firstStack.get(0) + " from firstStack " + firstStack + "  added on turn " + turn);
                     salarySum += firstStack.get(0);
                     firstStack.remove(0);
                 } else {
-//                    System.out.println(secondStack.get(0) + " from secondStack" + secondStack + "  added on turn " + turn );
+                    log.info(secondStack.get(0) + " from secondStack" + secondStack + "  added on turn " + turn);
                     salarySum += secondStack.get(0);
                     secondStack.remove(0);
                 }
             }
-            if (salarySum <= maxSalarySum){
+            if (salarySum <= maxSalarySum) {
                 turn++;
-            }else {
+            } else {
                 break;
             }
 
@@ -193,13 +142,42 @@ public class HrManagers {
         return turn;
     }
 
-    public static int getStackSalariesSum(ArrayList<Integer> stack){
+    public static int getStackSalariesSum(ArrayList<Integer> stack) {
         int stackSalariesSum = 0;
-        for (int i = 0; i < stack.size(); i++) {
-            stackSalariesSum += stack.get(i);
+        for (Integer integer : stack) {
+            stackSalariesSum += integer;
         }
         return stackSalariesSum;
     }
+
+    public static void inputInitialData() {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        try {
+            String[] inputData = br.readLine().split(" ");
+            firstStackSize = Integer.parseInt(inputData[0]);
+            secondStackSize = Integer.parseInt(inputData[1]);
+            maxSalarySum = Integer.parseInt(inputData[2]);
+
+            for (int i = 0; i < Math.max(firstStackSize, secondStackSize); i++) {
+                String[] data = br.readLine().split(" ");
+                if (!data[0].equals("-")) {
+                    int inputOne = Integer.parseInt(data[0]);
+                    firstStack.add(inputOne);
+//               firstStackSalariesSum += inputOne;
+                    log.info("entered to firstStack: " + firstStack.get(i));
+                }
+                if (!data[1].equals("-")) {
+                    int inputTwo = Integer.parseInt(data[1]);
+                    secondStack.add(inputTwo);
+//                secondStackSalariesSum += inputTwo;
+                    log.info("entered to secondStack: " + secondStack.get(i));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
 
 
