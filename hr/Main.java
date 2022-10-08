@@ -103,7 +103,8 @@ public class Main {
                 firstStack.remove(0);
             } else {
                 if (firstStack.get(0) < secondStack.get(0)) {
-
+                    salarySum += firstStack.get(0);
+                    firstStack.remove(0);
                 } if (firstStack.get(0) > secondStack.get(0)) {
                     salarySum += secondStack.get(0);
                     secondStack.remove(0);

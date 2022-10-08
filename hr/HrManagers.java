@@ -81,26 +81,30 @@ public class HrManagers {
             if (firstStack.isEmpty() && secondStack.isEmpty()) {
                 break;
             } else if (firstStack.isEmpty()) {
-                incrementSumAndRemove(secondStack, salarySum);
+                salarySum =incrementSumAndRemove(secondStack, salarySum);
 //                salarySum += secondStack.get(0);
 //                secondStack.remove(0);
             } else if (secondStack.isEmpty()) {
-                incrementSumAndRemove(firstStack, salarySum);
+                salarySum =incrementSumAndRemove(firstStack, salarySum);
 //                salarySum += firstStack.get(0);
 //                firstStack.remove(0);
             } else {
                 if (firstStack.get(0) < secondStack.get(0)) {
-                    salarySum += firstStack.get(0);
-                    firstStack.remove(0);
+                    salarySum =incrementSumAndRemove(firstStack, salarySum);
+//                    salarySum += firstStack.get(0);
+//                    firstStack.remove(0);
                 } else if (firstStack.get(0) > secondStack.get(0)) {
-                    salarySum += secondStack.get(0);
-                    secondStack.remove(0);
+                    salarySum =incrementSumAndRemove(secondStack, salarySum);
+//                    salarySum += secondStack.get(0);
+//                    secondStack.remove(0);
                 }else if(getStackSalariesSum(firstStack) > getStackSalariesSum(secondStack)){
-                    salarySum += secondStack.get(0);
-                    secondStack.remove(0);
+                    salarySum = incrementSumAndRemove(secondStack, salarySum);
+//                    salarySum += secondStack.get(0);
+//                    secondStack.remove(0);
                 }else {
-                    salarySum += firstStack.get(0);
-                    firstStack.remove(0);
+                    salarySum = incrementSumAndRemove(firstStack, salarySum);
+//                    salarySum += firstStack.get(0);
+//                    firstStack.remove(0);
                 }
             }
             log.info("firstStack: " + firstStack);
@@ -151,9 +155,10 @@ public class HrManagers {
         }
     }
 
-    public static void incrementSumAndRemove(ArrayList<Integer> stack, int salarySum){
+    public static int incrementSumAndRemove(ArrayList<Integer> stack, int salarySum){
         salarySum += stack.get(0);
         stack.remove(0);
+        return salarySum;
     }
 }
 
