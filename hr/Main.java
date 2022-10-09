@@ -1,137 +1,114 @@
 package ru.hh.hr;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
 
 
 public class Main {
 
-    private static int maxSalarySum = 0;
-    private static ArrayList<Integer> firstStack = new ArrayList<>();
-    private static ArrayList<Integer> secondStack = new ArrayList<>();
+
+
 
 
     public static void main(String[] args) {
-        int firstStackSize = 0;
-        int secondStackSize = 0;
-        int firstStackSalariesSum = 0;
-        int secondStackSalariesSum = 0;
-
+        ArrayList<Integer> firstStack = new ArrayList<>();
+        ArrayList<Integer> secondStack = new ArrayList<>();
+        int firstStackLength = 0;
+        int secondStackLength = 0;
+        int maxSalarySum = 0;
 //        ---------------------------------------------------------------------------------------------------------
 ////
-//         firstStackSize = 6;
-//         secondStackSize = 4;
+//         firstStackLength = 6;
+//         secondStackLength = 4;
 //        maxSalarySum = 10;
 //        firstStack = new ArrayList<>(Arrays.asList(4, 2, 4, 6, 1, 7));
 //        secondStack = new ArrayList<>(Arrays.asList(2, 1, 8, 5));
 //        ---------------------------------------------------------------------------------------------------------
-//        int firstStackSize = 3;
-//        int secondStackSize = 4;
+//        int firstStackLength = 3;
+//        int secondStackLength = 4;
 //        maxSalarySum = 11;
 //        firstStack = new ArrayList<>(Arrays.asList(1, 2, 3));
 //        secondStack = new ArrayList<>(Arrays.asList(1, 2, 3, 4));
 //        ---------------------------------------------------------------------------------------------------------
-//        firstStackSize = 5;
-//        secondStackSize = 5;
+//        firstStackLength = 5;
+//        secondStackLength = 5;
 //        maxSalarySum = 10;
 //        firstStack = new ArrayList<>(Arrays.asList(5, 1, 1, 1, 1));
 //        secondStack = new ArrayList<>(Arrays.asList(1, 3, 3, 3, 3));
 
 //        ---------------------------------------------------------------------------------------------------------
-        firstStackSize = 4;
-        secondStackSize = 5;
-        maxSalarySum = 13;
-        firstStack = new ArrayList<>(Arrays.asList(1, 2, 3, 4));
-        secondStack = new ArrayList<>(Arrays.asList(1, 2, 3, 3, 1));
+//        firstStackLength = 4;
+//        secondStackLength = 5;
+//        maxSalarySum = 13;
+//        firstStack = new ArrayList<>(Arrays.asList(1, 2, 3, 4));
+//        secondStack = new ArrayList<>(Arrays.asList(1, 2, 3, 3, 1));
 //        ---------------------------------------------------------------------------------------------------------
-
-//        Scanner sc = new Scanner(System.in);
-//        String input = sc.nextLine().trim();
-//        String[] inputData = input.split(" ");
-//        firstStackSize = Integer.parseInt(inputData[0]);
-//        secondStackSize = Integer.parseInt(inputData[1]);
-//        maxSalarySum = Integer.parseInt(inputData[2]);
 //
-//
-//        int maxSize = Math.max(firstStackSize, secondStackSize);
-//        for (int i = 0; i < maxSize; i++) {
-//            String lineInput = sc.nextLine().trim();
-//            String[] data = lineInput.split(" ");
-//            if (!data[0].equals("-")) {
-//                int inputOne = Integer.parseInt(data[0]);
-//                firstStack.add(inputOne);
-////               firstStackSalariesSum += inputOne;
-//            }
-//            if (!data[1].equals("-")) {
-//                int inputTwo = Integer.parseInt(data[1]);
-//                secondStack.add(inputTwo);
-////                secondStackSalariesSum += inputTwo;
-//            }
-//        }
-//        sc.close();
+        Scanner sc = new Scanner(System.in);
+        String input = sc.nextLine().trim();
+        String[] inputData = input.split(" ");
+        firstStackLength = Integer.parseInt(inputData[0]);
+        secondStackLength = Integer.parseInt(inputData[1]);
+        maxSalarySum = Integer.parseInt(inputData[2]);
 
-        firstStackSalariesSum = getStackSalariesSum(firstStack);
-        secondStackSalariesSum = getStackSalariesSum(secondStack);
 
-        boolean isFirstStackOkBySum = firstStackSalariesSum <= maxSalarySum;
-        boolean isSecondStackOkBySum = secondStackSalariesSum <= maxSalarySum;
-        int result;
-
-        if ((isFirstStackOkBySum & !isSecondStackOkBySum)
-                || (isFirstStackOkBySum & isSecondStackOkBySum & (firstStackSize > secondStackSize))
-        ) {
-            result = getMaxTurns(firstStackSalariesSum, firstStackSize, new ArrayList<>(), new ArrayList<>(secondStack));
-        } else if ((isSecondStackOkBySum & !isFirstStackOkBySum)
-                || ((isFirstStackOkBySum & isSecondStackOkBySum) & firstStackSize < secondStackSize))
-        {
-            result = getMaxTurns(secondStackSalariesSum, secondStackSize, new ArrayList<>(firstStack), new ArrayList<>());
-        } else {
-            result = getMaxTurns(0, 0, new ArrayList<>(firstStack), new ArrayList<>(secondStack));
+        int maxSize = Math.max(firstStackLength, secondStackLength);
+        for (int i = 0; i < maxSize; i++) {
+            String lineInput = sc.nextLine().trim();
+            String[] data = lineInput.split(" ");
+            if (!data[0].equals("-")) {
+                int inputOne = Integer.parseInt(data[0]);
+                firstStack.add(inputOne);
+//               firstStackSalariesSum += inputOne;
+            }
+            if (!data[1].equals("-")) {
+                int inputTwo = Integer.parseInt(data[1]);
+                secondStack.add(inputTwo);
+//                secondStackSalariesSum += inputTwo;
+            }
         }
+        sc.close();
 
+        int result = Math.max(findMaxTurns(firstStack, secondStack, maxSalarySum), findMaxTurns(secondStack, firstStack, maxSalarySum));
         System.out.println(result);
+
+
     }
 
-    public static int getMaxTurns(int salarySum, int turn, ArrayList<Integer> firstStack, ArrayList<Integer> secondStack) {
-        while (true) {
-            if (firstStack.isEmpty() && secondStack.isEmpty()) {
-                break;
-            } else if (firstStack.isEmpty()) {
-                salarySum += secondStack.get(0);
-                secondStack.remove(0);
-            } else if (secondStack.isEmpty()) {
-                salarySum += firstStack.get(0);
-                firstStack.remove(0);
-            } else {
-                if (firstStack.get(0) < secondStack.get(0)) {
-                    salarySum += firstStack.get(0);
-                    firstStack.remove(0);
-                } if (firstStack.get(0) > secondStack.get(0)) {
-                    salarySum += secondStack.get(0);
-                    secondStack.remove(0);
-                }else if(getStackSalariesSum(firstStack) > getStackSalariesSum(secondStack)){
-                    salarySum += secondStack.get(0);
-                    secondStack.remove(0);
-                }else {
-                    salarySum += firstStack.get(0);
-                    firstStack.remove(0);
-                }
-            }
-            if (salarySum <= maxSalarySum) {
-                turn++;
-            } else {
-                break;
+    public static int findMaxTurns (ArrayList<Integer> firstStack, ArrayList < Integer > secondStack,int maxSalarySum){
+        int firstStackLength = firstStack.size();
+        int maxTurns;
+        int firstStackMaxTurns = 0;
+        int sum = 0;
+        //перебираем только 1-й стек
+        //находим макс кол-во ходов первого стека и макс получившуюся сумму, не превышающую заданную
+        while (firstStackMaxTurns < firstStackLength && sum + firstStack.get(firstStackMaxTurns) < maxSalarySum) {
+            sum += firstStack.get(firstStackMaxTurns);
+            firstStackMaxTurns++;
+        }
+
+        maxTurns = firstStackMaxTurns;
+        //перебираем второй стек,
+        //добавляем по одному элементу из второго стека к сумме
+        for (int secondStackMaxTurns = 1; secondStackMaxTurns <= secondStack.size(); secondStackMaxTurns++) {
+            sum += secondStack.get(secondStackMaxTurns - 1);
+
+            //пока сумма больше и ходы по первому стеку есть:
+            while (sum > maxSalarySum && firstStackMaxTurns > 0) {
+                //  уменьшаем ходы первого стека
+                firstStackMaxTurns--;
+                //уменьшаем сумму на последний элемент из первого стека, на котором сумма не превышает макс
+                sum -= firstStack.get(firstStackMaxTurns);
             }
 
+            //если ходы первого стека кончились, а сумма все равно больше - выходим из цикла
+            if (sum > maxSalarySum) {
+                break;
+            }
+            maxTurns = Math.max(maxTurns, firstStackMaxTurns + secondStackMaxTurns);
         }
-        return turn;
-    }
-
-    public static int getStackSalariesSum(ArrayList<Integer> stack) {
-        int stackSalariesSum = 0;
-        for (int i = 0; i < stack.size(); i++) {
-            stackSalariesSum += stack.get(i);
-        }
-        return stackSalariesSum;
+        return maxTurns;
     }
 }
 
